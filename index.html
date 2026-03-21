@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИИ по сферам</title>
+<style>
+  /* ... весь ваш CSS без изменений ... */
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+  <div class="dashboard-title">Где уже работает ИИ</div>
+  <div class="dashboard-subtitle">Нажмите на сферу, чтобы узнать подробности</div>
+  <div class="sectors-row" id="sectorsRow"></div>
+  <div class="detail-panel" id="detailPanel">
+    <div class="placeholder" id="placeholder">
+      <div class="placeholder-icon">👆</div>
+      Выберите сферу выше
+    </div>
+  </div>
+</div>
+
+<script>
+var sectors = [
+  {
+    id: 'it',
+    icon: '💻',
+    name: 'IT и Телеком',
+    color: 'blue',
+    tags: ['RAG', 'NLP', 'СППР', 'Автоматизация'],
+    text: 'Здесь ИИ используется как <strong>платформенная технология</strong>. Например, ИИ-ассистент на базе RAG (Retrieval-Augmented Generation) автоматизирует рутинные процессы: транскрибацию встреч, подготовку отчётов и ответов клиентам, сокращая время поиска информации в разы. Также активно применяются <strong>системы поддержки принятия решений</strong> (СППР) и обработка естественного языка (NLP) для работы с документацией.'
+  },
+  {
+    id: 'med',
+    icon: '🏥',
+    name: 'Медицина',
+    color: 'green',
+    tags: ['Диагностика', 'СППР', 'Компьютерное зрение', 'МРТ / КТ'],
+    text: 'ИИ стал незаменимым помощником в диагностике. От <strong>55% до 60%</strong> решений здесь связаны с системами поддержки принятия решений, которые помогают врачам анализировать медицинские изображения (МРТ, КТ, рентген), выявлять патологии и ставить более точные диагнозы.'
+  },
+  {
+    id: 'fin',
+    icon: '🏦',
+    name: 'Финансы',
+    color: 'amber',
+    tags: ['GenAI', 'ML-модели', 'Антифрод', 'Риск-менеджмент'],
+    text: 'Банки и страховые компании активно экспериментируют с <strong>генеративным ИИ</strong> (GenAI) для анализа документов, подготовки клиентских материалов и автоматизации внутренних процессов. ML-модели используются для прогнозирования рыночных трендов, управления рисками и оценки кредитоспособности. Крупные банки применяют генеративные ИИ для <strong>анализа транзакций, выявления мошенничества</strong> и создания персонализированных продуктов.'
+  },
+  {
+    id: 'industry',
+    icon: '🏭',
+    name: 'Промышленность',
+    color: 'orange',
+    tags: ['Компьютерное зрение', 'Предиктивное ТО', 'Видеоаналитика', 'Оптимизация'],
+    text: 'Здесь преобладают прагматичные сценарии: <strong>контроль качества</strong> с помощью компьютерного зрения (до 20% кейсов), предиктивное обслуживание оборудования (профилактика поломок) и оптимизация цепочек поставок. Например, видеоаналитика помогает отслеживать <strong>соблюдение техники безопасности</strong> на производстве в реальном времени.'
+  },
+  {
+    id: 'retail',
+    icon: '🛒',
+    name: 'Ритейл',
+    color: 'violet',
+    tags: ['Рекомендации', 'Персонализация', 'GenAI', 'Аналитика'],
+    text: 'Классический пример — <strong>системы рекомендаций</strong>, которые анализируют поведение покупателей и историю покупок, чтобы предлагать наиболее подходящие товары, увеличивая продажи и удовлетворённость клиентов. <strong>Генеративный ИИ</strong> также помогает создавать персонализированные рекламные кампании.'
+  },
+  {
+    id: 'gov',
+    icon: '🏛️',
+    name: 'Госсектор',
+    color: 'cyan',
+    tags: ['СППР — 35%', 'CV — 29%', 'NLP', 'Документооборот'],
+    text: 'Здесь наиболее востребованы <strong>системы поддержки принятия решений (35%)</strong> и компьютерное зрение (29%) для решения задач в административных процессах, социальной сфере и транспортной инфраструктуре. NLP используется для <strong>анализа обращений граждан</strong> и обработки больших объёмов документов.'
+  }
+];
+
+const row = document.getElementById('sectorsRow');
+const panel = document.getElementById('detailPanel');
+const placeholder = document.getElementById('placeholder');
+
+// Создаём элементы
+for (let i = 0; i < sectors.length; i++) {
+  const s = sectors[i];
+  
+  // Вкладка
+  const tab = document.createElement('div');
+  tab.className = 'sector-tab';
+  tab.setAttribute('data-color', s.color);
+  tab.setAttribute('data-index', i);
+  tab.innerHTML = `<span class="sector-icon">${s.icon}</span><span class="sector-name">${s.name}</span>`;
+  row.appendChild(tab);
+  
+  // Карточка с деталями
+  const card = document.createElement('div');
+  card.className = 'detail-card';
+  card.id = `card-${i}`;
+  card.setAttribute('data-color', s.color);
+  
+  const tagsHtml = s.tags.map(tag => `<span class="tech-tag">${tag}</span>`).join('');
+  card.innerHTML = `
+    <div class="detail-inner">
+      <div class="detail-header">
+        <div class="detail-icon">${s.icon}</div>
+        <div class="detail-title">${s.name}</div>
+      </div>
+      <div class="detail-text">${s.text}</div>
+      <div class="tech-tags">${tagsHtml}</div>
+    </div>
+  `;
+  panel.appendChild(card);
+  
+  // Обработчик клика
+  tab.onclick = () => {
+    // Снимаем активность со всех вкладок и карточек
+    document.querySelectorAll('.sector-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.detail-card').forEach(c => c.classList.remove('active'));
+    // Скрываем плейсхолдер
+    placeholder.style.display = 'none';
+    // Активируем текущие
+    tab.classList.add('active');
+    card.classList.add('active');
+    // Прокручиваем к вкладке
+    tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  };
+}
+
+// Активируем первый сектор по умолчанию (симулируем клик)
+if (row.firstChild) {
+  row.firstChild.click();
+}
+</script>
+
+</body>
+</html>
