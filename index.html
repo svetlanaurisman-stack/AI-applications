@@ -5,21 +5,311 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ИИ по сферам</title>
 <style>
-  /* ... весь ваш CSS без изменений ... */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #ffffff;
+    color: #1a1a2e;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .dashboard-title {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    /* ИЗМЕНЕНИЕ: вместо градиента — тёмно-синий цвет */
+    color: #0a2f6c;
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
+  }
+
+  .dashboard-subtitle {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 36px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== Горизонтальная лента заголовков ===== */
+  .sectors-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    /* ДОБАВЛЕНО: небольшой отступ сверху, чтобы вкладки не прилипали к краю */
+    margin-top: 4px;
+  }
+
+  .sectors-row::-webkit-scrollbar {
+    height: 4px;
+  }
+  .sectors-row::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 2px;
+  }
+  .sectors-row::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 2px;
+  }
+
+  .sector-tab {
+    flex: 0 0 auto;
+    /* ИЗМЕНЕНИЕ: увеличены вертикальные отступы */
+    padding: 18px 22px;
+    background: #f8f9fb;
+    border: 2px solid #e8eaef;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sector-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  }
+
+  .sector-tab.active {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  }
+
+  /* Цветовые классы для табов */
+  .sector-tab[data-color="blue"]:hover,
+  .sector-tab[data-color="blue"].active { border-color: #2563eb; }
+  
+  .sector-tab[data-color="green"]:hover,
+  .sector-tab[data-color="green"].active { border-color: #16a34a; }
+  
+  .sector-tab[data-color="amber"]:hover,
+  .sector-tab[data-color="amber"].active { border-color: #f59e0b; }
+  
+  .sector-tab[data-color="orange"]:hover,
+  .sector-tab[data-color="orange"].active { border-color: #ea580c; }
+  
+  .sector-tab[data-color="violet"]:hover,
+  .sector-tab[data-color="violet"].active { border-color: #7c3aed; }
+  
+  .sector-tab[data-color="cyan"]:hover,
+  .sector-tab[data-color="cyan"].active { border-color: #0891b2; }
+
+  .sector-icon {
+    font-size: 1.4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sector-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    color: #555;
+    transition: color 0.3s;
+  }
+
+  .sector-tab.active .sector-name {
+    color: #1a1a2e;
+  }
+
+  /* ===== Панель описания ===== */
+  .detail-panel {
+    margin-top: 24px;
+    position: relative;
+    min-height: 180px;
+  }
+
+  .detail-card {
+    display: none;
+    animation: fadeSlideIn 0.45s ease;
+  }
+
+  .detail-card.active {
+    display: block;
+  }
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .detail-inner {
+    background: #f8f9fb;
+    border: 1px solid #e8eaef;
+    border-radius: 20px;
+    padding: 32px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Цветные верхние линии */
+  .detail-card[data-color="blue"] .detail-inner { border-top: 3px solid #2563eb; }
+  .detail-card[data-color="green"] .detail-inner { border-top: 3px solid #16a34a; }
+  .detail-card[data-color="amber"] .detail-inner { border-top: 3px solid #f59e0b; }
+  .detail-card[data-color="orange"] .detail-inner { border-top: 3px solid #ea580c; }
+  .detail-card[data-color="violet"] .detail-inner { border-top: 3px solid #7c3aed; }
+  .detail-card[data-color="cyan"] .detail-inner { border-top: 3px solid #0891b2; }
+
+  .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .detail-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e8eaef;
+  }
+
+  /* Цветные фоны иконок */
+  .detail-card[data-color="blue"] .detail-icon { background: rgba(37, 99, 235, 0.1); border-color: rgba(37, 99, 235, 0.2); }
+  .detail-card[data-color="green"] .detail-icon { background: rgba(22, 163, 74, 0.1); border-color: rgba(22, 163, 74, 0.2); }
+  .detail-card[data-color="amber"] .detail-icon { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); }
+  .detail-card[data-color="orange"] .detail-icon { background: rgba(234, 88, 12, 0.1); border-color: rgba(234, 88, 12, 0.2); }
+  .detail-card[data-color="violet"] .detail-icon { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.2); }
+  .detail-card[data-color="cyan"] .detail-icon { background: rgba(8, 145, 178, 0.1); border-color: rgba(8, 145, 178, 0.2); }
+
+  .detail-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  .detail-text {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: #555;
+  }
+
+  .detail-text strong {
+    color: #1a1a2e;
+    font-weight: 600;
+  }
+
+  /* ===== Теги технологий ===== */
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .tech-tag {
+    padding: 5px 14px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #555;
+    letter-spacing: 0.3px;
+  }
+
+  /* Цветные теги */
+  .detail-card[data-color="blue"] .tech-tag { background: rgba(37, 99, 235, 0.08); border-color: rgba(37, 99, 235, 0.2); color: #1d4ed8; }
+  .detail-card[data-color="green"] .tech-tag { background: rgba(22, 163, 74, 0.08); border-color: rgba(22, 163, 74, 0.2); color: #15803d; }
+  .detail-card[data-color="amber"] .tech-tag { background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.2); color: #b45309; }
+  .detail-card[data-color="orange"] .tech-tag { background: rgba(234, 88, 12, 0.08); border-color: rgba(234, 88, 12, 0.2); color: #c2410c; }
+  .detail-card[data-color="violet"] .tech-tag { background: rgba(124, 58, 237, 0.08); border-color: rgba(124, 58, 237, 0.2); color: #6d28d9; }
+  .detail-card[data-color="cyan"] .tech-tag { background: rgba(8, 145, 178, 0.08); border-color: rgba(8, 145, 178, 0.2); color: #0e7490; }
+
+  /* ===== Подсказка до клика ===== */
+  .placeholder {
+    text-align: center;
+    padding: 50px 20px;
+    color: #bbb;
+    font-size: 0.9rem;
+  }
+
+  .placeholder-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  /* ===== Адаптив ===== */
+  @media (max-width: 768px) {
+    .dashboard {
+      padding: 24px 12px;
+    }
+    .dashboard-title {
+      font-size: 1.2rem;
+    }
+    .sector-tab {
+      padding: 14px 16px;  /* на мобильных можно оставить чуть меньше */
+    }
+    .sector-name {
+      font-size: 0.75rem;
+    }
+    .detail-inner {
+      padding: 24px 20px;
+    }
+    .detail-title {
+      font-size: 1rem;
+    }
+    .detail-text {
+      font-size: 0.85rem;
+    }
+  }
 </style>
 </head>
 <body>
 
 <div class="dashboard">
+
   <div class="dashboard-title">Где уже работает ИИ</div>
   <div class="dashboard-subtitle">Нажмите на сферу, чтобы узнать подробности</div>
+
   <div class="sectors-row" id="sectorsRow"></div>
+
   <div class="detail-panel" id="detailPanel">
     <div class="placeholder" id="placeholder">
       <div class="placeholder-icon">👆</div>
       Выберите сферу выше
     </div>
   </div>
+
 </div>
 
 <script>
@@ -78,11 +368,9 @@ const row = document.getElementById('sectorsRow');
 const panel = document.getElementById('detailPanel');
 const placeholder = document.getElementById('placeholder');
 
-// Создаём элементы
 for (let i = 0; i < sectors.length; i++) {
   const s = sectors[i];
   
-  // Вкладка
   const tab = document.createElement('div');
   tab.className = 'sector-tab';
   tab.setAttribute('data-color', s.color);
@@ -90,7 +378,6 @@ for (let i = 0; i < sectors.length; i++) {
   tab.innerHTML = `<span class="sector-icon">${s.icon}</span><span class="sector-name">${s.name}</span>`;
   row.appendChild(tab);
   
-  // Карточка с деталями
   const card = document.createElement('div');
   card.className = 'detail-card';
   card.id = `card-${i}`;
@@ -109,22 +396,17 @@ for (let i = 0; i < sectors.length; i++) {
   `;
   panel.appendChild(card);
   
-  // Обработчик клика
   tab.onclick = () => {
-    // Снимаем активность со всех вкладок и карточек
     document.querySelectorAll('.sector-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.detail-card').forEach(c => c.classList.remove('active'));
-    // Скрываем плейсхолдер
     placeholder.style.display = 'none';
-    // Активируем текущие
     tab.classList.add('active');
     card.classList.add('active');
-    // Прокручиваем к вкладке
     tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   };
 }
 
-// Активируем первый сектор по умолчанию (симулируем клик)
+// Автоматически активируем первый сектор
 if (row.firstChild) {
   row.firstChild.click();
 }
