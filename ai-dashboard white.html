@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИИ по сферам</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #ffffff;
+    color: #1a1a2e;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .dashboard-title {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #2563eb, #16a34a, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dashboard-subtitle {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 36px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== Горизонтальная лента заголовков ===== */
+  .sectors-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sectors-row::-webkit-scrollbar {
+    height: 4px;
+  }
+  .sectors-row::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 2px;
+  }
+  .sectors-row::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 2px;
+  }
+
+  .sector-tab {
+    flex: 0 0 auto;
+    padding: 14px 22px;
+    background: #f8f9fb;
+    border: 1px solid #e8eaef;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sector-tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.35s;
+    border-radius: 14px;
+  }
+
+  .sector-tab:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.06), 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  .sector-tab:hover::before {
+    opacity: 0.06;
+  }
+
+  .sector-tab.active {
+    border-color: var(--accent);
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08), 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  .sector-tab.active::before {
+    opacity: 0.08;
+  }
+
+  .sector-icon {
+    font-size: 1.4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sector-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    color: #555;
+    transition: color 0.3s;
+  }
+
+  .sector-tab.active .sector-name {
+    color: #1a1a2e;
+  }
+
+  /* ===== Панель описания ===== */
+  .detail-panel {
+    margin-top: 24px;
+    position: relative;
+    min-height: 180px;
+  }
+
+  .detail-card {
+    display: none;
+    animation: fadeSlideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .detail-card.active {
+    display: block;
+  }
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .detail-inner {
+    background: #f8f9fb;
+    border: 1px solid #e8eaef;
+    border-radius: 20px;
+    padding: 32px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .detail-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    border-radius: 20px 20px 0 0;
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .detail-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--accent) 10%, #fff);
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+
+  .detail-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  .detail-text {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: #555;
+  }
+
+  .detail-text strong {
+    color: #1a1a2e;
+    font-weight: 600;
+  }
+
+  /* ===== Теги технологий ===== */
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .tech-tag {
+    padding: 5px 14px;
+    background: color-mix(in srgb, var(--accent) 8%, #fff);
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: color-mix(in srgb, var(--accent) 85%, #000);
+    letter-spacing: 0.3px;
+  }
+
+  /* ===== Подсказка до клика ===== */
+  .placeholder {
+    text-align: center;
+    padding: 50px 20px;
+    color: #bbb;
+    font-size: 0.9rem;
+  }
+
+  .placeholder-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  /* ===== Адаптив ===== */
+  @media (max-width: 768px) {
+    .dashboard {
+      padding: 24px 12px;
+    }
+    .dashboard-title {
+      font-size: 1.2rem;
+    }
+    .sector-tab {
+      padding: 10px 16px;
+    }
+    .sector-name {
+      font-size: 0.75rem;
+    }
+    .detail-inner {
+      padding: 24px 20px;
+    }
+    .detail-title {
+      font-size: 1rem;
+    }
+    .detail-text {
+      font-size: 0.85rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+
+  <div class="dashboard-title">Где уже работает ИИ</div>
+  <div class="dashboard-subtitle">Нажмите на сферу, чтобы узнать подробности</div>
+
+  <div class="sectors-row" id="sectorsRow"></div>
+
+  <div class="detail-panel" id="detailPanel">
+    <div class="placeholder" id="placeholder">
+      <div class="placeholder-icon">👆</div>
+      Выберите сферу выше
+    </div>
+  </div>
+
+</div>
+
+<script>
+const sectors = [
+  {
+    id: 'it',
+    icon: '💻',
+    name: 'IT и Телеком',
+    accent: '#2563eb',
+    tags: ['RAG', 'NLP', 'СППР', 'Автоматизация'],
+    text: 'Здесь ИИ используется как <strong>платформенная технология</strong>. Например, ИИ-ассистент на базе RAG (Retrieval-Augmented Generation) автоматизирует рутинные процессы: транскрибацию встреч, подготовку отчётов и ответов клиентам, сокращая время поиска информации в разы. Также активно применяются <strong>системы поддержки принятия решений</strong> (СППР) и обработка естественного языка (NLP) для работы с документацией.'
+  },
+  {
+    id: 'med',
+    icon: '🏥',
+    name: 'Медицина',
+    accent: '#16a34a',
+    tags: ['Диагностика', 'СППР', 'Компьютерное зрение', 'МРТ / КТ'],
+    text: 'ИИ стал незаменимым помощником в диагностике. От <strong>55% до 60%</strong> решений здесь связаны с системами поддержки принятия решений, которые помогают врачам анализировать медицинские изображения (МРТ, КТ, рентген), выявлять патологии и ставить более точные диагнозы.'
+  },
+  {
+    id: 'fin',
+    icon: '🏦',
+    name: 'Финансы',
+    accent: '#f59e0b',
+    tags: ['GenAI', 'ML-модели', 'Антифрод', 'Риск-менеджмент'],
+    text: 'Банки и страховые компании активно экспериментируют с <strong>генеративным ИИ</strong> (GenAI) для анализа документов, подготовки клиентских материалов и автоматизации внутренних процессов. ML-модели используются для прогнозирования рыночных трендов, управления рисками и оценки кредитоспособности. Крупные банки применяют генеративные ИИ для <strong>анализа транзакций, выявления мошенничества</strong> и создания персонализированных продуктов.'
+  },
+  {
+    id: 'industry',
+    icon: '🏭',
+    name: 'Промышленность',
+    accent: '#ea580c',
+    tags: ['Компьютерное зрение', 'Предиктивное ТО', 'Видеоаналитика', 'Оптимизация'],
+    text: 'Здесь преобладают прагматичные сценарии: <strong>контроль качества</strong> с помощью компьютерного зрения (до 20% кейсов), предиктивное обслуживание оборудования (профилактика поломок) и оптимизация цепочек поставок. Например, видеоаналитика помогает отслеживать <strong>соблюдение техники безопасности</strong> на производстве в реальном времени.'
+  },
+  {
+    id: 'retail',
+    icon: '🛒',
+    name: 'Ритейл',
+    accent: '#7c3aed',
+    tags: ['Рекомендации', 'Персонализация', 'GenAI', 'Аналитика'],
+    text: 'Классический пример — <strong>системы рекомендаций</strong>, которые анализируют поведение покупателей и историю покупок, чтобы предлагать наиболее подходящие товары, увеличивая продажи и удовлетворённость клиентов. <strong>Генеративный ИИ</strong> также помогает создавать персонализированные рекламные кампании.'
+  },
+  {
+    id: 'gov',
+    icon: '🏛️',
+    name: 'Госсектор',
+    accent: '#0891b2',
+    tags: ['СППР — 35%', 'CV — 29%', 'NLP', 'Документооборот'],
+    text: 'Здесь наиболее востребованы <strong>системы поддержки принятия решений (35%)</strong> и компьютерное зрение (29%) для решения задач в административных процессах, социальной сфере и транспортной инфраструктуре. NLP используется для <strong>анализа обращений граждан</strong> и обработки больших объёмов документов.'
+  }
+];
+
+const row = document.getElementById('sectorsRow');
+const panel = document.getElementById('detailPanel');
+const placeholder = document.getElementById('placeholder');
+
+sectors.forEach((s, i) => {
+  const tab = document.createElement('div');
+  tab.className = 'sector-tab';
+  tab.style.setProperty('--accent', s.accent);
+  tab.dataset.index = i;
+  tab.innerHTML = `
+    <span class="sector-icon">${s.icon}</span>
+    <span class="sector-name">${s.name}</span>
+  `;
+  row.appendChild(tab);
+
+  const card = document.createElement('div');
+  card.className = 'detail-card';
+  card.id = `card-${i}`;
+  card.style.setProperty('--accent', s.accent);
+  card.innerHTML = `
+    <div class="detail-inner">
+      <div class="detail-header">
+        <div class="detail-icon">${s.icon}</div>
+        <div class="detail-title">${s.name}</div>
+      </div>
+      <div class="detail-text">${s.text}</div>
+      <div class="tech-tags">
+        ${s.tags.map(t => `<span class="tech-tag">${t}</span>`).join('')}
+      </div>
+    </div>
+  `;
+  panel.appendChild(card);
+
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.sector-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.detail-card').forEach(c => c.classList.remove('active'));
+    placeholder.style.display = 'none';
+
+    if (tab.classList.contains('was-active')) {
+      tab.classList.remove('was-active');
+      placeholder.style.display = 'block';
+      return;
+    }
+
+    document.querySelectorAll('.sector-tab').forEach(t => t.classList.remove('was-active'));
+
+    tab.classList.add('active', 'was-active');
+    card.classList.add('active');
+
+    tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  });
+});
+</script>
+
+</body>
+</html>
