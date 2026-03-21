@@ -72,10 +72,10 @@
     flex: 0 0 auto;
     padding: 14px 22px;
     background: #f8f9fb;
-    border: 1px solid #e8eaef;
+    border: 2px solid #e8eaef;
     border-radius: 14px;
     cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.35s ease;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -84,39 +84,35 @@
     overflow: hidden;
   }
 
-  .sector-tab::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, var(--accent), transparent);
-    opacity: 0;
-    transition: opacity 0.35s;
-    border-radius: 14px;
-  }
-
   .sector-tab:hover {
-    border-color: var(--accent);
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.06), 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
-  }
-
-  .sector-tab:hover::before {
-    opacity: 0.06;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
   }
 
   .sector-tab.active {
-    border-color: var(--accent);
     background: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08), 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
   }
 
-  .sector-tab.active::before {
-    opacity: 0.08;
-  }
+  /* Цветовые классы для табов */
+  .sector-tab[data-color="blue"]:hover,
+  .sector-tab[data-color="blue"].active { border-color: #2563eb; }
+  
+  .sector-tab[data-color="green"]:hover,
+  .sector-tab[data-color="green"].active { border-color: #16a34a; }
+  
+  .sector-tab[data-color="amber"]:hover,
+  .sector-tab[data-color="amber"].active { border-color: #f59e0b; }
+  
+  .sector-tab[data-color="orange"]:hover,
+  .sector-tab[data-color="orange"].active { border-color: #ea580c; }
+  
+  .sector-tab[data-color="violet"]:hover,
+  .sector-tab[data-color="violet"].active { border-color: #7c3aed; }
+  
+  .sector-tab[data-color="cyan"]:hover,
+  .sector-tab[data-color="cyan"].active { border-color: #0891b2; }
 
   .sector-icon {
     font-size: 1.4rem;
@@ -147,7 +143,7 @@
 
   .detail-card {
     display: none;
-    animation: fadeSlideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeSlideIn 0.45s ease;
   }
 
   .detail-card.active {
@@ -174,16 +170,13 @@
     overflow: hidden;
   }
 
-  .detail-inner::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-    border-radius: 20px 20px 0 0;
-  }
+  /* Цветные верхние линии */
+  .detail-card[data-color="blue"] .detail-inner { border-top: 3px solid #2563eb; }
+  .detail-card[data-color="green"] .detail-inner { border-top: 3px solid #16a34a; }
+  .detail-card[data-color="amber"] .detail-inner { border-top: 3px solid #f59e0b; }
+  .detail-card[data-color="orange"] .detail-inner { border-top: 3px solid #ea580c; }
+  .detail-card[data-color="violet"] .detail-inner { border-top: 3px solid #7c3aed; }
+  .detail-card[data-color="cyan"] .detail-inner { border-top: 3px solid #0891b2; }
 
   .detail-header {
     display: flex;
@@ -199,10 +192,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: color-mix(in srgb, var(--accent) 10%, #fff);
+    background: #fff;
     border-radius: 14px;
-    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    border: 1px solid #e8eaef;
   }
+
+  /* Цветные фоны иконок */
+  .detail-card[data-color="blue"] .detail-icon { background: rgba(37, 99, 235, 0.1); border-color: rgba(37, 99, 235, 0.2); }
+  .detail-card[data-color="green"] .detail-icon { background: rgba(22, 163, 74, 0.1); border-color: rgba(22, 163, 74, 0.2); }
+  .detail-card[data-color="amber"] .detail-icon { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); }
+  .detail-card[data-color="orange"] .detail-icon { background: rgba(234, 88, 12, 0.1); border-color: rgba(234, 88, 12, 0.2); }
+  .detail-card[data-color="violet"] .detail-icon { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.2); }
+  .detail-card[data-color="cyan"] .detail-icon { background: rgba(8, 145, 178, 0.1); border-color: rgba(8, 145, 178, 0.2); }
 
   .detail-title {
     font-size: 1.2rem;
@@ -231,14 +232,22 @@
 
   .tech-tag {
     padding: 5px 14px;
-    background: color-mix(in srgb, var(--accent) 8%, #fff);
-    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    background: #fff;
+    border: 1px solid #e0e0e0;
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: color-mix(in srgb, var(--accent) 85%, #000);
+    color: #555;
     letter-spacing: 0.3px;
   }
+
+  /* Цветные теги */
+  .detail-card[data-color="blue"] .tech-tag { background: rgba(37, 99, 235, 0.08); border-color: rgba(37, 99, 235, 0.2); color: #1d4ed8; }
+  .detail-card[data-color="green"] .tech-tag { background: rgba(22, 163, 74, 0.08); border-color: rgba(22, 163, 74, 0.2); color: #15803d; }
+  .detail-card[data-color="amber"] .tech-tag { background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.2); color: #b45309; }
+  .detail-card[data-color="orange"] .tech-tag { background: rgba(234, 88, 12, 0.08); border-color: rgba(234, 88, 12, 0.2); color: #c2410c; }
+  .detail-card[data-color="violet"] .tech-tag { background: rgba(124, 58, 237, 0.08); border-color: rgba(124, 58, 237, 0.2); color: #6d28d9; }
+  .detail-card[data-color="cyan"] .tech-tag { background: rgba(8, 145, 178, 0.08); border-color: rgba(8, 145, 178, 0.2); color: #0e7490; }
 
   /* ===== Подсказка до клика ===== */
   .placeholder {
@@ -299,12 +308,12 @@
 </div>
 
 <script>
-const sectors = [
+var sectors = [
   {
     id: 'it',
     icon: '💻',
     name: 'IT и Телеком',
-    accent: '#2563eb',
+    color: 'blue',
     tags: ['RAG', 'NLP', 'СППР', 'Автоматизация'],
     text: 'Здесь ИИ используется как <strong>платформенная технология</strong>. Например, ИИ-ассистент на базе RAG (Retrieval-Augmented Generation) автоматизирует рутинные процессы: транскрибацию встреч, подготовку отчётов и ответов клиентам, сокращая время поиска информации в разы. Также активно применяются <strong>системы поддержки принятия решений</strong> (СППР) и обработка естественного языка (NLP) для работы с документацией.'
   },
@@ -312,7 +321,7 @@ const sectors = [
     id: 'med',
     icon: '🏥',
     name: 'Медицина',
-    accent: '#16a34a',
+    color: 'green',
     tags: ['Диагностика', 'СППР', 'Компьютерное зрение', 'МРТ / КТ'],
     text: 'ИИ стал незаменимым помощником в диагностике. От <strong>55% до 60%</strong> решений здесь связаны с системами поддержки принятия решений, которые помогают врачам анализировать медицинские изображения (МРТ, КТ, рентген), выявлять патологии и ставить более точные диагнозы.'
   },
@@ -320,7 +329,7 @@ const sectors = [
     id: 'fin',
     icon: '🏦',
     name: 'Финансы',
-    accent: '#f59e0b',
+    color: 'amber',
     tags: ['GenAI', 'ML-модели', 'Антифрод', 'Риск-менеджмент'],
     text: 'Банки и страховые компании активно экспериментируют с <strong>генеративным ИИ</strong> (GenAI) для анализа документов, подготовки клиентских материалов и автоматизации внутренних процессов. ML-модели используются для прогнозирования рыночных трендов, управления рисками и оценки кредитоспособности. Крупные банки применяют генеративные ИИ для <strong>анализа транзакций, выявления мошенничества</strong> и создания персонализированных продуктов.'
   },
@@ -328,7 +337,7 @@ const sectors = [
     id: 'industry',
     icon: '🏭',
     name: 'Промышленность',
-    accent: '#ea580c',
+    color: 'orange',
     tags: ['Компьютерное зрение', 'Предиктивное ТО', 'Видеоаналитика', 'Оптимизация'],
     text: 'Здесь преобладают прагматичные сценарии: <strong>контроль качества</strong> с помощью компьютерного зрения (до 20% кейсов), предиктивное обслуживание оборудования (профилактика поломок) и оптимизация цепочек поставок. Например, видеоаналитика помогает отслеживать <strong>соблюдение техники безопасности</strong> на производстве в реальном времени.'
   },
@@ -336,7 +345,7 @@ const sectors = [
     id: 'retail',
     icon: '🛒',
     name: 'Ритейл',
-    accent: '#7c3aed',
+    color: 'violet',
     tags: ['Рекомендации', 'Персонализация', 'GenAI', 'Аналитика'],
     text: 'Классический пример — <strong>системы рекомендаций</strong>, которые анализируют поведение покупателей и историю покупок, чтобы предлагать наиболее подходящие товары, увеличивая продажи и удовлетворённость клиентов. <strong>Генеративный ИИ</strong> также помогает создавать персонализированные рекламные кампании.'
   },
@@ -344,64 +353,66 @@ const sectors = [
     id: 'gov',
     icon: '🏛️',
     name: 'Госсектор',
-    accent: '#0891b2',
+    color: 'cyan',
     tags: ['СППР — 35%', 'CV — 29%', 'NLP', 'Документооборот'],
     text: 'Здесь наиболее востребованы <strong>системы поддержки принятия решений (35%)</strong> и компьютерное зрение (29%) для решения задач в административных процессах, социальной сфере и транспортной инфраструктуре. NLP используется для <strong>анализа обращений граждан</strong> и обработки больших объёмов документов.'
   }
 ];
 
-const row = document.getElementById('sectorsRow');
-const panel = document.getElementById('detailPanel');
-const placeholder = document.getElementById('placeholder');
+var row = document.getElementById('sectorsRow');
+var panel = document.getElementById('detailPanel');
+var placeholder = document.getElementById('placeholder');
 
-sectors.forEach((s, i) => {
-  const tab = document.createElement('div');
-  tab.className = 'sector-tab';
-  tab.style.setProperty('--accent', s.accent);
-  tab.dataset.index = i;
-  tab.innerHTML = `
-    <span class="sector-icon">${s.icon}</span>
-    <span class="sector-name">${s.name}</span>
-  `;
-  row.appendChild(tab);
+for (var i = 0; i < sectors.length; i++) {
+  (function(index) {
+    var s = sectors[index];
+    
+    var tab = document.createElement('div');
+    tab.className = 'sector-tab';
+    tab.setAttribute('data-color', s.color);
+    tab.setAttribute('data-index', index);
+    tab.innerHTML = '<span class="sector-icon">' + s.icon + '</span><span class="sector-name">' + s.name + '</span>';
+    row.appendChild(tab);
 
-  const card = document.createElement('div');
-  card.className = 'detail-card';
-  card.id = `card-${i}`;
-  card.style.setProperty('--accent', s.accent);
-  card.innerHTML = `
-    <div class="detail-inner">
-      <div class="detail-header">
-        <div class="detail-icon">${s.icon}</div>
-        <div class="detail-title">${s.name}</div>
-      </div>
-      <div class="detail-text">${s.text}</div>
-      <div class="tech-tags">
-        ${s.tags.map(t => `<span class="tech-tag">${t}</span>`).join('')}
-      </div>
-    </div>
-  `;
-  panel.appendChild(card);
-
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.sector-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.detail-card').forEach(c => c.classList.remove('active'));
-    placeholder.style.display = 'none';
-
-    if (tab.classList.contains('was-active')) {
-      tab.classList.remove('was-active');
-      placeholder.style.display = 'block';
-      return;
+    var card = document.createElement('div');
+    card.className = 'detail-card';
+    card.id = 'card-' + index;
+    card.setAttribute('data-color', s.color);
+    
+    var tagsHtml = '';
+    for (var j = 0; j < s.tags.length; j++) {
+      tagsHtml += '<span class="tech-tag">' + s.tags[j] + '</span>';
     }
+    
+    card.innerHTML = '<div class="detail-inner">' +
+      '<div class="detail-header">' +
+        '<div class="detail-icon">' + s.icon + '</div>' +
+        '<div class="detail-title">' + s.name + '</div>' +
+      '</div>' +
+      '<div class="detail-text">' + s.text + '</div>' +
+      '<div class="tech-tags">' + tagsHtml + '</div>' +
+    '</div>';
+    panel.appendChild(card);
 
-    document.querySelectorAll('.sector-tab').forEach(t => t.classList.remove('was-active'));
-
-    tab.classList.add('active', 'was-active');
-    card.classList.add('active');
-
-    tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  });
-});
+    tab.onclick = function() {
+      var allTabs = document.querySelectorAll('.sector-tab');
+      var allCards = document.querySelectorAll('.detail-card');
+      
+      for (var k = 0; k < allTabs.length; k++) {
+        allTabs[k].classList.remove('active');
+      }
+      for (var k = 0; k < allCards.length; k++) {
+        allCards[k].classList.remove('active');
+      }
+      
+      placeholder.style.display = 'none';
+      tab.classList.add('active');
+      card.classList.add('active');
+      
+      tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    };
+  })(i);
+}
 </script>
 
 </body>
